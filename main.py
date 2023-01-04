@@ -110,7 +110,6 @@ class Cell:
         elif direction == "O":
             self.has_right_wall = False
             cell.has_left_wall = False
-        
 
 class Maze:
     def __init__(self, point: Point, num_rows: int, num_cols: int, cell_size_x: int, cell_size_y: int, seed :int = None) -> None:
@@ -145,7 +144,6 @@ class Maze:
             for cell in row:
                 cell.draw(win, "black")
                 win.redraw()
-                #time.sleep(0.05)
 
     def break_entrance_and_exit(self) -> None:
         self._cells[0][0].has_left_wall = False
@@ -166,7 +164,6 @@ class Maze:
         self._cells[0][0].visited = True
         cell_stack = []
         cell_stack.append(self._cells[0][0])
-        #Iterative Implementation of Backtracking (DFS)
         current = None
         while len(cell_stack) > 0:
             current = cell_stack.pop()
@@ -195,12 +192,10 @@ class Maze:
             if len(neighbours) > 0:
                 cell_stack.append(current)
                 chosen = random.choice(neighbours)
-                if chosen.visited:
-                    win.draw_line(Line(current.get_center_point(), chosen.get_center_point()), "white")
-                    win.draw_line(Line(current.get_center_point(), last.get_center_point()), "white")
-                else:
-                    win.draw_line(Line(current.get_center_point(), chosen.get_center_point()), "red")
+                win.draw_line(Line(current.get_center_point(), chosen.get_center_point()), "red")
                 win.redraw()
+                if last not in cell_stack and last and self._cells[0][0] != last:
+                    win.draw_line(Line(current.get_center_point(), last.get_center_point()), "ghost white")
                 if chosen == self._cells[-1][-1]:
                     return True      
                 time.sleep(0.1)
@@ -208,7 +203,7 @@ class Maze:
                 cell_stack.append(chosen)
                 last = current 
             else:
-                win.draw_line(Line(current.get_center_point(), last.get_center_point()), "white")
+                win.draw_line(Line(current.get_center_point(), last.get_center_point()), "ghost white")
                 win.redraw()
                 last = current
         return False
