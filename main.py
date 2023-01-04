@@ -3,7 +3,7 @@ import time
 import random
 
 WINDOW_HEIGHT = 800
-WINDOW_WIDHT =800
+WINDOW_WIDHT = 800
 NUM_COLUMNS = 30
 NUM_ROWS = 30
 CELL_SIZE = 20
@@ -45,8 +45,9 @@ class Window:
         self.win.protocol("WM_DELETE_WINDOW", self.close)
 
     def redraw(self) -> None:
-        self.win.update_idletasks()
-        self.win.update()   
+        if self.run:
+            self.win.update_idletasks()
+            self.win.update()   
 
     def draw_line(self, line: Line, fill_color: str):
         line.draw(self.canvas, fill_color)
@@ -121,6 +122,7 @@ class Maze:
         self._cells = []
 
     def run(self, win: Window)  -> None:
+        win.run = True
         self.create_cells()
         self.break_entrance_and_exit()
         self.break_walls()
@@ -139,13 +141,8 @@ class Maze:
             current = Point(self.point.x, self.point.y + (self.cell_size_y * (i+1))) 
 
     def draw_cell(self, win: Window) -> None:
-        win.run = True
         for row in self._cells:
-            if not win.run:
-                break; 
             for cell in row:
-                if not win.run:
-                    break; 
                 cell.draw(win, "black")
                 win.redraw()
                 #time.sleep(0.05)
@@ -190,6 +187,7 @@ class Maze:
         self._cells[0][0].visited = True
         cell_stack = []
         cell_stack.append(self._cells[0][0])
+        last = None
         current = None
         while len(cell_stack) > 0:
             current = cell_stack.pop()
@@ -197,13 +195,22 @@ class Maze:
             if len(neighbours) > 0:
                 cell_stack.append(current)
                 chosen = random.choice(neighbours)
-                chosen.visited = True 
-                win.draw_line(Line(current.get_center_point(), chosen.get_center_point()), "red")       
+                if chosen.visited:
+                    win.draw_line(Line(current.get_center_point(), chosen.get_center_point()), "white")
+                    win.draw_line(Line(current.get_center_point(), last.get_center_point()), "white")
+                else:
+                    win.draw_line(Line(current.get_center_point(), chosen.get_center_point()), "red")
                 win.redraw()
                 if chosen == self._cells[-1][-1]:
                     return True      
                 time.sleep(0.1)
+                chosen.visited = True  
                 cell_stack.append(chosen)
+                last = current 
+            else:
+                win.draw_line(Line(current.get_center_point(), last.get_center_point()), "white")
+                win.redraw()
+                last = current
         return False
 
     def find_path_neighbour(self, column:int, row:int) -> list:
@@ -215,16 +222,16 @@ class Maze:
                 continue
             ok = False
             if key == "N" and not self._cells[column][row].has_top_wall:
-                if self._cells[next_column][next_row].visited == False:
+                if not self._cells[next_column][next_row].visited:
                     ok = True
             elif key == "S" and not self._cells[column][row].has_bottom_wall:
-                if self._cells[next_column][next_row].visited == False:
+                if not self._cells[next_column][next_row].visited:
                     ok = True
             elif key == "W" and not self._cells[column][row].has_left_wall:
-                if self._cells[next_column][next_row].visited == False:
+                if not self._cells[next_column][next_row].visited:
                     ok = True
             elif key == "O" and not self._cells[column][row].has_right_wall:
-                if self._cells[next_column][next_row].visited == False:
+                if not self._cells[next_column][next_row].visited:
                     ok = True
             if ok:
                 neighbours.append(self._cells[next_column][next_row])
