@@ -4,9 +4,9 @@ import random
 
 WINDOW_HEIGHT = 800
 WINDOW_WIDHT = 800
-NUM_COLUMNS = 30
-NUM_ROWS = 30
-CELL_SIZE = 20
+NUM_COLUMNS = 15
+NUM_ROWS = 15
+CELL_SIZE = 40
 SEARCHPATTERN = {
     "N":(-1, 0),
     "S":(1, 0),
@@ -16,7 +16,7 @@ SEARCHPATTERN = {
 
 def main():
     win = Window(WINDOW_HEIGHT, WINDOW_WIDHT)
-    m1 = Maze(Point(10,10), NUM_ROWS, NUM_COLUMNS, CELL_SIZE, CELL_SIZE, win)
+    m1 = Maze(Point(10,10), NUM_ROWS, NUM_COLUMNS, CELL_SIZE, CELL_SIZE)
     m1.run(win)
     win.wait_for_close()
 
@@ -78,13 +78,13 @@ class Cell:
 
     def draw(self, window: Window, color: str) -> None:
         if self.has_top_wall:
-            window.draw_line(Line(point1=self.point1, point2=Point(self.point2.x, self.point1.y)), color)
+            window.draw_line(Line(self.point1, Point(self.point2.x, self.point1.y)), color)
         if self.has_right_wall:
-            window.draw_line(Line(point1=Point(self.point2.x, self.point1.y), point2=self.point2), color)
+            window.draw_line(Line(Point(self.point2.x, self.point1.y), self.point2), color)
         if self.has_bottom_wall:
-            window.draw_line(Line(point1=self.point2, point2=Point(self.point1.x, self.point2.y)), color)
+            window.draw_line(Line(self.point2, Point(self.point1.x, self.point2.y)), color)
         if self.has_left_wall:
-            window.draw_line(Line(point1=Point(self.point1.x, self.point2.y), point2=self.point1), color)
+            window.draw_line(Line(Point(self.point1.x, self.point2.y), self.point1), color)
 
     def draw_move(self,window:Window, to_cell, undo=False) -> None:
         color = "red"
@@ -112,7 +112,7 @@ class Cell:
             cell.has_left_wall = False
 
 class Maze:
-    def __init__(self, point: Point, num_rows: int, num_cols: int, cell_size_x: int, cell_size_y: int, seed :int = None) -> None:
+    def __init__(self, point: Point, num_rows: int, num_cols: int, cell_size_x: int, cell_size_y: int) -> None:
         self.point = point
         self.num_rows = num_rows
         self.num_cols = num_cols
@@ -124,7 +124,7 @@ class Maze:
         win.run = True
         self.create_cells()
         self.break_entrance_and_exit()
-        self.break_walls()
+        self.create_labyrinth()
         self.draw_cell(win)
         self.reset_cell_visited()
         self.solve(win)
@@ -160,7 +160,7 @@ class Maze:
                 neighbours.append(self._cells[y][x])
         return neighbours
 
-    def break_walls(self) -> None:
+    def create_labyrinth(self) -> None:
         self._cells[0][0].visited = True
         cell_stack = []
         cell_stack.append(self._cells[0][0])
