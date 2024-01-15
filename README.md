@@ -1,7 +1,8 @@
 # Python Maze Builder with Solver
 
 ## Overview
-Welcome to the Python Maze Builder with Solver! This interactive tool is designed to create and solve mazes in a visually appealing way. Watch in real-time as the maze generates and the solving algorithm strategically finds its way through the labyrinth.
+Welcome to the Python Maze Builder with Solver! This tool is designed to create and solve mazes. 
+Watch in real-time as the maze generates and the solving algorithm strategically finds its way through the labyrinth.
 
 ## Features
 - **Dynamic Maze Generation**: Experience a new maze each time you run the program.
