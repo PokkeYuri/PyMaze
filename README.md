@@ -20,3 +20,6 @@ Watch in real-time as the maze generates and the solving algorithm strategically
 1. Run the command `py main.py` in your terminal.
 2. A window will pop up displaying the generated maze.
 3. Watch as the maze is automatically solved in real-time.
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for more details.
